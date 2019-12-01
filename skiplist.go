@@ -1,6 +1,8 @@
 package skiplist
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 // New create a new skip list with the default max level.
 func New() *SkipList {
@@ -12,9 +14,9 @@ func New() *SkipList {
 
 }
 
-// randLevel generates a random level in [0, maxLevel) for new element.
-func (list *SkipList) randLevel() (level int) {
-
+// randLevel generates a random level in [1, maxLevel] for new element.
+func (list *SkipList) randLevel() int {
+	var level int = 1
 	for ((rand.Int63()>>32)&0xffff < DefaultProbability) && (level < list.maxLevel) {
 		level++
 	}
@@ -61,7 +63,7 @@ func (list *SkipList) searchPath(key uint64) []*elementNode {
 
 // Set updates the value of the element specified by key.
 // If the key does not exist, insert a new node into the list ordered by key.
-// Returns a pointer to the element node
+// Returns a pointer to the element.
 func (list *SkipList) Set(key uint64, value interface{}) (el *Element) {
 	path := list.searchPath(key)
 
