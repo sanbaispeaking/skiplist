@@ -1,5 +1,7 @@
 package skiplist
 
+import "sync"
+
 var (
 	DefaultMaxLevel int = 21
 	// Probability for an element to be inserted into a higher level approximates to 0.25
@@ -23,4 +25,5 @@ type SkipList struct {
 	length   int
 	// caches search path for insertion and removal
 	searchPathCache []*elementNode
+	mutex           sync.Mutex
 }

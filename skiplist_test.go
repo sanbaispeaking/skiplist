@@ -1,6 +1,9 @@
 package skiplist
 
-import "testing"
+import (
+	"sync"
+	"testing"
+)
 
 func sancheck(list *SkipList, t *testing.T) {
 	for k, element := range list.next {
@@ -81,4 +84,38 @@ func TestBasicCRUD(t *testing.T) {
 		}
 	}
 
+}
+
+func TestConcurrency(t *testing.T) {
+	var list *SkipList = New()
+
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	repeat := 10000
+	go func() {
+		for i := 0; i < repeat; i++ {
+			list.Set(uint64(i), i)
+		}
+		wg.Done()
+	}()
+
+	go func() {
+		for i := 0; i < repeat; i++ {
+			list.Get(uint64(i))
+		}
+		wg.Done()
+	}()
+
+	go func() {
+		for i := 0; i < repeat; i++ {
+			list.Get(uint64(i))
+		}
+		wg.Done()
+	}()
+
+	wg.Wait()
+	if list.length != repeat {
+		t.Fail()
+	}
 }

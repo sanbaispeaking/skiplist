@@ -26,6 +26,9 @@ func (list *SkipList) randLevel() int {
 // Get searches for an element by key and returns a pointer to it.
 // Returns nil if not found.
 func (list *SkipList) Get(key uint64) *Element {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
 	var prev *elementNode = &list.elementNode
 	var next *Element
 
@@ -65,6 +68,9 @@ func (list *SkipList) searchPath(key uint64) []*elementNode {
 // If the key does not exist, insert a new node into the list ordered by key.
 // Returns a pointer to the element.
 func (list *SkipList) Set(key uint64, value interface{}) (el *Element) {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
 	path := list.searchPath(key)
 
 	if el = path[0].next[0]; el != nil && el.key == key {
@@ -93,6 +99,9 @@ func (list *SkipList) Set(key uint64, value interface{}) (el *Element) {
 // Remove delete the element specified by key from the list.
 // Returns a pointer to that element, or nil if key not in the list.
 func (list *SkipList) Remove(key uint64) (el *Element) {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
 	path := list.searchPath(key)
 
 	if el = path[0].next[0]; el != nil && el.key == key {
